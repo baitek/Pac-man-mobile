@@ -37,6 +37,8 @@ public class PacMan : MonoBehaviour {
 		UpdateOrientation ();
 
         UpdateAnimationState();
+
+        ConsumePellet();
 	}
 
 	void CheckInput () {
@@ -173,6 +175,21 @@ public class PacMan : MonoBehaviour {
         }
     }
 
+    void ConsumePellet()
+    {
+        GameObject o = GetTileAtPosition(transform.position);
+        if (o != null)
+        {
+            Tile tile = o.GetComponent<Tile>();
+            if (tile != null)
+            {
+                if (!tile.didConsume && (tile.isPellet || tile.isSupperPellet)) {
+                    o.GetComponent<SpriteRenderer>().enabled = false;
+                    tile.didConsume = true;
+                }
+            }
+        }
+    }
     Node CanMove(Vector2 d) {
         Node moveToNode = null;
         for(int i=0; i<currentNode.neighbors.Length; i++){
@@ -184,6 +201,19 @@ public class PacMan : MonoBehaviour {
             }
         }
         return moveToNode;
+    }
+
+    GameObject GetTileAtPosition(Vector2 pos)
+    {
+        int tileX = Mathf.RoundToInt(pos.x);
+        int tileY = Mathf.RoundToInt(pos.y);
+
+        GameObject tile = GameObject.Find("Game").GetComponent<GameBoard>().board[tileX, tileY];
+
+        if(tile != null)
+            return tile;
+        
+        return null;
     }
     Node GetNodeAtPosition(Vector2 pos)
     {

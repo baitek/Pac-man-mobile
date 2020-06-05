@@ -5,15 +5,11 @@ using UnityEngine;
 public class Tile : MonoBehaviour {
 
     public bool isPortal;
+
+    public bool isPellet;
+    public bool isSupperPellet;
+    public bool didConsume;
+
     public GameObject portalReciver;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }
