@@ -84,10 +84,26 @@ public class PacMan : MonoBehaviour {
 
         if(targetNode!=currentNode && targetNode != null)
         {
+            if(nextDirection == direction * -1)
+            {
+                direction *= -1;
+
+                Node tempNode = targetNode;
+                targetNode = previousNode;
+                previousNode = tempNode;
+            }
+            
             if(OverShotTarget())
             {
                 currentNode = targetNode;
                 transform.localPosition = currentNode.transform.position;
+                GameObject otherPortal = GetPortal(currentNode.transform.position);
+
+                if(otherPortal != null)
+                {
+                    transform.localPosition = otherPortal.transform.position;
+                    currentNode = otherPortal.GetComponent<Node>();
+                }
                 Node moveToNode = CanMove(nextDirection);
                 if (moveToNode != null)
                     direction = nextDirection;
@@ -194,4 +210,21 @@ public class PacMan : MonoBehaviour {
         Vector2 vec = targetPosition - (Vector2)previousNode.transform.position;
         return vec.sqrMagnitude;
     }
+    GameObject GetPortal(Vector2 pos)
+    {
+        GameObject tile = GameObject.Find("Game").GetComponent<GameBoard>().board[(int)pos.x, (int)pos.y];
+        if (tile != null)
+        {
+            if (tile.GetComponent<Tile>() != null)
+            {
+                if (tile.GetComponent<Tile>().isPortal)
+                {
+                    GameObject otherPortal = tile.GetComponent<Tile>().portalReciver;
+                    return otherPortal;
+                }
+            }
+        }
+        return null;
+    }
 }
+

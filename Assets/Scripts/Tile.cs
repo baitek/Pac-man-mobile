@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour {
 
+    public bool isPortal;
+    public GameObject portalReciver;
+
 	// Use this for initialization
 	void Start () {
 		
