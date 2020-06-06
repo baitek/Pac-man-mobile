@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PacMan : MonoBehaviour {
 
+    public Vector2 orientation;
+
 	public float speed = 4.0f;
 
     public Sprite idleSprite;
@@ -12,6 +14,7 @@ public class PacMan : MonoBehaviour {
     private Vector2 nextDirection;
 
     private int pelletsConsumed = 0;
+
     private Node currentNode, moveToNode, previousNode, targetNode;
 
 	// Use this for initialization
@@ -25,6 +28,7 @@ public class PacMan : MonoBehaviour {
             Debug.Log(currentNode);
         }
         direction = Vector2.left;
+        orientation = Vector2.left;
         ChangePosition(direction);
 	}
 	
@@ -143,22 +147,26 @@ public class PacMan : MonoBehaviour {
 
 		if (direction == Vector2.left) {
 
+            orientation = Vector2.left;
 			transform.localScale = new Vector3 (-1, 1, 1);
 			transform.localRotation = Quaternion.Euler (0, 0, 0);
 
 		} else if (direction == Vector2.right) {
 
-			transform.localScale = new Vector3 (1, 1, 1);
+            orientation = Vector2.right;
+            transform.localScale = new Vector3 (1, 1, 1);
 			transform.localRotation = Quaternion.Euler (0, 0, 0);
 
 		} else if (direction == Vector2.up) {
 
-			transform.localScale = new Vector3 (1, 1, 1);
+            orientation = Vector2.up;
+            transform.localScale = new Vector3 (1, 1, 1);
 			transform.localRotation = Quaternion.Euler (0, 0, 90);
 
 		} else if (direction == Vector2.down) {
 
-			transform.localScale = new Vector3 (1, 1, 1);
+            orientation = Vector2.down;
+            transform.localScale = new Vector3 (1, 1, 1);
 			transform.localRotation = Quaternion.Euler (0, 0, 270);
 		}
 	}
