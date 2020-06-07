@@ -9,6 +9,9 @@ public class GameBoard : MonoBehaviour {
     public int totalPellets = 0;
     public int score = 0;
 
+    public AudioClip backgroundAudioNormal;
+    public AudioClip backgroundAudioFrightened;
+
     public GameObject[,] board = new GameObject[boardWidth, boardHeight];
 
     void Start () {

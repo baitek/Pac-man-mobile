@@ -10,6 +10,8 @@ public class Tile : MonoBehaviour {
     public bool isSupperPellet;
     public bool didConsume;
 
+    public bool isGhostHouseEntrance;
+    public bool isGhostHouse;
     public GameObject portalReciver;
 
 }

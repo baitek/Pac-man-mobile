@@ -252,11 +252,7 @@ public class PacMan : MonoBehaviour {
         int tileX = Mathf.RoundToInt(pos.x);
         int tileY = Mathf.RoundToInt(pos.y);
 
-        Debug.Log("Getting tile st Position X: " + tileX + " , Y: " + tileY);
-
         GameObject tile = GameObject.Find("Game").GetComponent<GameBoard>().board[tileX, tileY];
-
-        Debug.Log(tile);
 
         if(tile != null)
             return tile;
