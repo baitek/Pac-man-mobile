@@ -9,6 +9,8 @@ public class Ghost : MonoBehaviour {
     public float frightenedModeMoveSpeed = 2.9f;
     public float consumedMoveSpeed = 15f;
 
+    public bool canMove = true;
+
     public int pinkyReleaseTimer = 5;
     public int inkyReleaseTimer = 14;
     public int clydeReleaseTimer = 21;
@@ -110,6 +112,16 @@ public class Ghost : MonoBehaviour {
 
     public void Restart()
     {
+        canMove = true;
+
+        transform.GetComponent<SpriteRenderer>().enabled = true;
+
+        currentMode = Mode.Scatter;
+
+        moveSpeed = normalMoveSpeed;
+
+        previousModeSpeed = 0;
+
         transform.position = startingPosition.transform.position;
 
         ghostReleaseTimer = 0;
@@ -138,15 +150,18 @@ public class Ghost : MonoBehaviour {
     // Update is called once per frame
     void Update () {
 
-        ModeUpdate();
+        if (canMove)
+        {
+            ModeUpdate();
 
-        Move();
+            Move();
 
-        ReleaseGhosts();
+            ReleaseGhosts();
 
-        CheckCollision();
+            CheckCollision();
 
-        CheckIsInGhostHouse();
+            CheckIsInGhostHouse();
+        }
 	}
 
     void CheckIsInGhostHouse()
@@ -193,7 +208,11 @@ public class Ghost : MonoBehaviour {
             }
             else
             {
-                GameObject.Find("Game").transform.GetComponent<GameBoard>().Restart();
+
+                if (currentMode != Mode.Consumed)
+                {
+                    GameObject.Find("Game").transform.GetComponent<GameBoard>().StartDeath();
+                }
             }
             
         }
