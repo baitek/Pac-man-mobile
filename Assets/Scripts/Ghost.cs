@@ -108,6 +108,33 @@ public class Ghost : MonoBehaviour {
                
     }
 
+    public void Restart()
+    {
+        transform.position = startingPosition.transform.position;
+
+        ghostReleaseTimer = 0;
+        modeChangeIteration = 1;
+        modeChangeTimer = 0;
+
+        if (transform.name != "Blinky")
+        {
+            isInGhostHouse = true;
+            currentNode = startingPosition;
+            if (isInGhostHouse)
+            {
+                direction = Vector2.up;
+                targetNode = currentNode.neighbors[0];
+            }                                    
+            else
+            {
+                direction = Vector2.left;
+                targetNode = ChooseNextNode();         
+            }
+
+            previousNode = currentNode;
+            UpdateAnimatorController();
+        }
+    }
     // Update is called once per frame
     void Update () {
 
@@ -166,7 +193,7 @@ public class Ghost : MonoBehaviour {
             }
             else
             {
-
+                GameObject.Find("Game").transform.GetComponent<GameBoard>().Restart();
             }
             
         }

@@ -24,13 +24,16 @@ public class PacMan : MonoBehaviour {
 
     private Node currentNode, moveToNode, previousNode, targetNode;
 
+    private Node startingPosition;
+
 	// Use this for initialization
 	void Start () {
 
         audio = transform.GetComponent<AudioSource>();
 
         Node node = GetNodeAtPosition(transform.localPosition);
-        
+
+        startingPosition = node;
         if(node != null)
         {
             currentNode = node;
@@ -41,6 +44,18 @@ public class PacMan : MonoBehaviour {
         ChangePosition(direction);
 	}
 	
+    public void Restart()
+    {
+        transform.position = startingPosition.transform.position;
+
+        currentNode = startingPosition;
+
+        direction = Vector2.left;
+        orientation = Vector2.left;
+        nextDirection = Vector2.left;
+
+        ChangePosition(direction);
+    }
 	// Update is called once per frame
 	void Update () {
 
