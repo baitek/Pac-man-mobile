@@ -110,28 +110,40 @@ public class Ghost : MonoBehaviour {
                
     }
 
+    public void MoveToStartingPosition()
+    {
+        if (transform.name != "Blinky")
+            isInGhostHouse = true;
+
+            transform.position = startingPosition.transform.position;
+
+        if (isInGhostHouse)
+        {
+            direction = Vector2.up;
+        }
+        else
+        {
+            direction = Vector2.left;
+        }
+        UpdateAnimatorController();
+
+    }
     public void Restart()
     {
         canMove = true;
-
-        transform.GetComponent<SpriteRenderer>().enabled = true;
 
         currentMode = Mode.Scatter;
 
         moveSpeed = normalMoveSpeed;
 
-        previousModeSpeed = 0;
-
-        transform.position = startingPosition.transform.position;
+        previousModeSpeed = 0;     
 
         ghostReleaseTimer = 0;
         modeChangeIteration = 1;
         modeChangeTimer = 0;
 
-        if (transform.name != "Blinky")
-        {
-            isInGhostHouse = true;
             currentNode = startingPosition;
+
             if (isInGhostHouse)
             {
                 direction = Vector2.up;
@@ -145,7 +157,7 @@ public class Ghost : MonoBehaviour {
 
             previousNode = currentNode;
             UpdateAnimatorController();
-        }
+        
     }
     // Update is called once per frame
     void Update () {

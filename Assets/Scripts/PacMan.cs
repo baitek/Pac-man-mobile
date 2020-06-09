@@ -42,31 +42,38 @@ public class PacMan : MonoBehaviour {
         if(node != null)
         {
             currentNode = node;
-            Debug.Log(currentNode);
         }
         direction = Vector2.left;
         orientation = Vector2.left;
+
         ChangePosition(direction);
 	}
 	
+    public void MoveToStartingPosition()
+    {
+
+        transform.position = startingPosition.transform.position;
+
+        transform.GetComponent<SpriteRenderer>().sprite = idleSprite;
+
+        direction = Vector2.left;
+        orientation = Vector2.left;
+
+        UpdateOrientation();
+    }
     public void Restart()
     {
-        canMove = true;
+        canMove = true;     
+
+        currentNode = startingPosition;
+
+        nextDirection = Vector2.left;
 
         transform.GetComponent<Animator>().runtimeAnimatorController = chompAnimation;
         transform.GetComponent<Animator>().enabled = true;
 
-        transform.GetComponent<SpriteRenderer>().enabled = true;
-
-        transform.position = startingPosition.transform.position;
-
-        currentNode = startingPosition;
-
-        direction = Vector2.left;
-        orientation = Vector2.left;
-        nextDirection = Vector2.left;
-
         ChangePosition(direction);
+
     }
 	// Update is called once per frame
 	void Update () {
