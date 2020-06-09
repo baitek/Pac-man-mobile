@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 public class GameMenu : MonoBehaviour {
 
-    public bool isOnePlayerGame = true;
+    public static bool isOnePlayerGame = true;
 
     public Text playerText1;
     public Text playerText2;

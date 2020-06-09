@@ -9,17 +9,34 @@ public class GameBoard : MonoBehaviour {
     private static int boardHeight = 36;
 
     private bool didStartDeath = false;
+    private bool didStartConsumed = false;
 
     public int totalPellets = 0;
     public int score = 0;
+    public int playerOneScore = 0;
+    public int playerTwoScore = 0;
     public int pacManLives = 3;
+
+    public bool isPlayerOneUp = true;
 
     public AudioClip backgroundAudioNormal;
     public AudioClip backgroundAudioFrightened;
     public AudioClip backgroundAudioDeath;
+    public AudioClip consumedGhostAudioClip;
 
     public Text playerText;
     public Text readyText;
+
+    public Text highScoreText;
+    public Text playerOneUp;
+    public Text playerTwoUp;
+    public Text playerOneScoreText;
+    public Text playerTwoScoreText;
+    public Image playerLives2;
+    public Image playerLives3;
+
+    public Text consumedGhostScoreText;
+
     public GameObject[,] board = new GameObject[boardWidth, boardHeight];
 
     void Start () {
@@ -30,7 +47,7 @@ public class GameBoard : MonoBehaviour {
         {
             Vector2 pos = o.transform.position;
 
-            if (o.name != "PacMan" && o.name != "Nodes" && o.name != "NonNodes" && o.name != "Maze" && o.name != "Pellets" && o.tag != "Ghost" && o.tag != "ghostHome" && o.name != "Canvas" && o.name != "PlayerText" && o.name != "ReadyText")    
+            if (o.name != "PacMan" && o.name != "Nodes" && o.name != "NonNodes" && o.name != "Maze" && o.name != "Pellets" && o.tag != "Ghost" && o.tag != "ghostHome" && o.name != "Canvas" && o.name != "PlayerText" && o.name != "ReadyText" && o.tag != "UIElements")     
             {
                 if(o.GetComponent<Tile>()!= null)
                 {
@@ -48,8 +65,51 @@ public class GameBoard : MonoBehaviour {
         StartGame();
     }
 	
+    void Update()
+    {
+        UpdateUI();
+    }
+    void UpdateUI()
+    {
+        playerOneScoreText.text = playerOneScore.ToString();
+        playerTwoScoreText.text = playerTwoScore.ToString();
+
+        if (pacManLives == 3)
+        {
+            playerLives3.enabled = true;
+            playerLives2.enabled = true;
+        }else if (pacManLives == 2)
+        {
+            playerLives3.enabled = false;
+            playerLives2.enabled = true;
+        }
+        else if (pacManLives == 1)
+        {
+            playerLives3.enabled = false;
+            playerLives2.enabled = false;
+        }
+    }
     public void StartGame()
     {
+        if (GameMenu.isOnePlayerGame)
+        {
+            playerTwoUp.GetComponent<Text>().enabled = false;
+            playerTwoScoreText.GetComponent<Text>().enabled = false;
+        }
+        else
+        {
+            playerTwoUp.GetComponent<Text>().enabled = true;
+            playerTwoScoreText.GetComponent<Text>().enabled = true;
+        }
+
+        if (isPlayerOneUp)
+        {
+            StartCoroutine(StartBlinking(playerOneUp));
+        }
+        else
+        {
+            StartCoroutine(StartBlinking(playerTwoUp));
+        }
         GameObject[] o = GameObject.FindGameObjectsWithTag("Ghost");
         foreach (GameObject ghost in o)
         {
@@ -62,7 +122,58 @@ public class GameBoard : MonoBehaviour {
 
         StartCoroutine(ShowObjectsAfter(2.25f));
     }
+    public void StartConsumed(Ghost consumedGhost)
+    {
+        if (!didStartConsumed)
+        {
+            didStartConsumed = true;
+            GameObject[] o = GameObject.FindGameObjectsWithTag("Ghost");
+            foreach(GameObject ghost in o)
+            {
 
+                ghost.transform.GetComponent<Ghost>().canMove = false;
+            }
+            GameObject pacMan = GameObject.Find("PacMan");
+            pacMan.transform.GetComponent<PacMan>().canMove = false;
+            pacMan.transform.GetComponent<SpriteRenderer>().enabled = false;
+            consumedGhost.transform.GetComponent<SpriteRenderer>().enabled = false;
+            transform.GetComponent<AudioSource>().Stop();
+            Vector2 pos = consumedGhost.transform.position;
+            Vector2 viewPortPoint = Camera.main.WorldToViewportPoint(pos);
+
+            consumedGhostScoreText.GetComponent<RectTransform>().anchorMin = viewPortPoint;
+            consumedGhostScoreText.GetComponent<RectTransform>().anchorMax = viewPortPoint;
+
+            consumedGhostScoreText.GetComponent<Text>().enabled = true;
+            transform.GetComponent<AudioSource>().PlayOneShot(consumedGhostAudioClip);
+            StartCoroutine(ProcessConsumedAfter(0.75f, consumedGhost));
+
+        }
+    }
+    IEnumerator StartBlinking(Text blinkText)
+    {
+        yield return new WaitForSeconds(0.25f);
+
+        blinkText.GetComponent<Text>().enabled = !blinkText.GetComponent<Text>().enabled;
+        StartCoroutine(StartBlinking(blinkText));
+    }
+
+    IEnumerator ProcessConsumedAfter(float delay, Ghost consumedGhost)
+    {
+        yield return new WaitForSeconds(delay);
+        consumedGhostScoreText.GetComponent<Text>().enabled = false;
+        GameObject pacMan = GameObject.Find("PacMan");
+        pacMan.transform.GetComponent<SpriteRenderer>().enabled = true;
+        consumedGhost.transform.GetComponent<SpriteRenderer>().enabled = true;
+        GameObject[] o = GameObject.FindGameObjectsWithTag("Ghost");
+        foreach (GameObject ghost in o)
+        {
+            ghost.transform.GetComponent<Ghost>().canMove = true;
+        }
+        pacMan.transform.GetComponent<PacMan>().canMove = true;
+        transform.GetComponent<AudioSource>().Play();
+        didStartConsumed = false;
+    }
     IEnumerator ShowObjectsAfter(float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -98,8 +209,19 @@ public class GameBoard : MonoBehaviour {
     }
     public void StartDeath()
     {
+
         if (!didStartDeath)
         {
+            StopAllCoroutines();
+            if (GameMenu.isOnePlayerGame)
+            {
+                playerOneUp.GetComponent<Text>().enabled = true;
+            }
+            else
+            {
+                playerOneUp.GetComponent<Text>().enabled = true;
+                playerTwoUp.GetComponent<Text>().enabled = true;
+            }
             didStartDeath = true;
 
             GameObject[] o = GameObject.FindGameObjectsWithTag("Ghost");

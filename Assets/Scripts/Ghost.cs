@@ -232,10 +232,28 @@ public class Ghost : MonoBehaviour {
 
     void Consumed()
     {
+        if (GameMenu.isOnePlayerGame)
+        {
+            GameObject.Find("Game").GetComponent<GameBoard>().playerOneScore += 200;
+        }
+        else
+        {
+            if (GameObject.Find("Game").GetComponent<GameBoard>().isPlayerOneUp)
+            {
+                GameObject.Find("Game").GetComponent<GameBoard>().playerOneScore += 200;
+            }
+            else
+            {
+                GameObject.Find("Game").GetComponent<GameBoard>().playerTwoScore += 200;
+
+            }
+        }
         currentMode = Mode.Consumed;
         previousModeSpeed = moveSpeed;
         moveSpeed = consumedMoveSpeed;
         UpdateAnimatorController();
+
+        GameObject.Find("Game").transform.GetComponent<GameBoard>().StartConsumed(this.GetComponent<Ghost>());
 
     }
     void UpdateAnimatorController()
