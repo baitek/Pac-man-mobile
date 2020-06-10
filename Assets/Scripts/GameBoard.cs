@@ -12,19 +12,15 @@ public class GameBoard : MonoBehaviour {
     private bool didStartDeath = false;
     private bool didStartConsumed = false;
 
-    private static int playerOneLevel = 1;
-    private static int playerTwoLevel = 1; 
-
-    public int playerOnePelletsConsumed = 0;
-    public int playerTwoPelletsConsumed = 0;
+    public static int playerOneLevel = 1;
+    public static int playerTwoLevel = 1; 
 
     public int totalPellets = 0;
     public int score = 0;
     public static int playerOneScore = 0;
     public static int playerTwoScore = 0;
-    public int pacManLives = 3;
 
-    public bool isPlayerOneUp = true;
+    public static bool isPlayerOneUp = true;
     public bool shouldBlink = false;
 
     public float blinkIntervalTime = 0.1f;
@@ -53,6 +49,8 @@ public class GameBoard : MonoBehaviour {
 
     public GameObject[,] board = new GameObject[boardWidth, boardHeight];
 
+    private bool didIncrementLevel = false;
+
     void Start () {
 
         Object[] objects = GameObject.FindObjectsOfType (typeof(GameObject));
@@ -76,6 +74,21 @@ public class GameBoard : MonoBehaviour {
             }
         }
 
+        if (isPlayerOneUp)
+        {
+            if (playerOneLevel == 1)
+            {
+                GetComponent<AudioSource>().Play();
+            }
+        }
+        else
+        {
+            if (playerTwoLevel == 1)
+            {
+                GetComponent<AudioSource>().Play();
+            }
+        }
+        
         StartGame();
     }
 	
@@ -92,34 +105,57 @@ public class GameBoard : MonoBehaviour {
         playerOneScoreText.text = playerOneScore.ToString();
         playerTwoScoreText.text = playerTwoScore.ToString();
 
-        if (pacManLives == 3)
+        if (isPlayerOneUp)
         {
-            playerLives3.enabled = true;
-            playerLives2.enabled = true;
-        }else if (pacManLives == 2)
-        {
-            playerLives3.enabled = false;
-            playerLives2.enabled = true;
+            if (GameMenu.livesPlayerOne == 3)
+            {
+                playerLives3.enabled = true;
+                playerLives2.enabled = true;
+            }
+            else if (GameMenu.livesPlayerOne == 2)
+            {
+                playerLives3.enabled = false;
+                playerLives2.enabled = true;
+            }
+            else if (GameMenu.livesPlayerOne == 1)
+            {
+                playerLives3.enabled = false;
+                playerLives2.enabled = false;
+            }
         }
-        else if (pacManLives == 1)
+        else
         {
-            playerLives3.enabled = false;
-            playerLives2.enabled = false;
+            if (GameMenu.livesPlayerTwo == 3)
+            {
+                playerLives3.enabled = true;
+                playerLives2.enabled = true;
+            }
+            else if (GameMenu.livesPlayerTwo == 2)
+            {
+                playerLives3.enabled = false;
+                playerLives2.enabled = true;
+            }
+            else if (GameMenu.livesPlayerTwo == 1)
+            {
+                playerLives3.enabled = false;
+                playerLives2.enabled = false;
+            }
         }
+   
     }
 
     void CheckPelletsConsumed()
     {
         if (isPlayerOneUp)
         {
-            if (totalPellets == playerOnePelletsConsumed)
+            if (totalPellets == GameMenu.playerOnePelletsConsumed)
             {
                 PlayerWin(1);
             }
         }
         else
         {
-            if (totalPellets == playerTwoPelletsConsumed)
+            if (totalPellets == GameMenu.playerTwoPelletsConsumed)
             {
                 PlayerWin(2);
             }
@@ -130,12 +166,23 @@ public class GameBoard : MonoBehaviour {
     {
         if (playerNum == 1) 
         {
-            playerOneLevel++;
-        }else
-        {
-            playerTwoLevel++;
+            if (!didIncrementLevel)
+            {
+                didIncrementLevel = true;
+                playerOneLevel++;
+                StartCoroutine(ProcessWin(2));
+            }
+
         }
-        StartCoroutine(ProcessWin(2));    
+        else
+        {
+            if (!didIncrementLevel)
+            {
+                didIncrementLevel = true;
+                playerTwoLevel++;
+                StartCoroutine(ProcessWin(2));
+            }
+        }
     }
      
 
@@ -197,7 +244,7 @@ public class GameBoard : MonoBehaviour {
             {
                 blinkIntervalTimer = 0;
 
-                if (GameObject.Find("Maze").transform.GetComponent<SpriteRenderer>().sprite = mazeBlue)
+                if (GameObject.Find("Maze").transform.GetComponent<SpriteRenderer>().sprite == mazeBlue)
                 {
                     GameObject.Find("Maze").transform.GetComponent<SpriteRenderer>().sprite = mazeWhite;
                 }
@@ -472,3 +519,5 @@ public class GameBoard : MonoBehaviour {
         didStartDeath = false;
     }
 }
+
+

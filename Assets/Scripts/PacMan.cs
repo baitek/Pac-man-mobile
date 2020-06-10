@@ -12,7 +12,7 @@ public class PacMan : MonoBehaviour {
 
     public Vector2 orientation;
 
-	public float speed = 4.0f;
+	public float speed = 6.0f;
 
     public Sprite idleSprite;
 
@@ -45,7 +45,39 @@ public class PacMan : MonoBehaviour {
         orientation = Vector2.left;
 
         ChangePosition(direction);
+        if (GameBoard.isPlayerOneUp)
+        {
+            SetDifficultyForLevel(GameBoard.playerOneLevel);
+        }
+        else
+        {
+            SetDifficultyForLevel(GameBoard.playerTwoLevel);
+        }
 	}
+
+    public void SetDifficultyForLevel(int level)
+    {
+        if (level == 1)
+        {
+            speed = 6;
+        }
+        else if (level == 2)
+        {
+            speed = 7;
+        }
+        else if (level == 3)
+        {
+            speed = 8;
+        }
+        else if (level == 4)
+        {
+            speed = 9;
+        }
+        else if (level == 5)
+        {
+            speed = 10;
+        }
+    }
 	
     public void MoveToStartingPosition()
     {
@@ -251,41 +283,40 @@ public class PacMan : MonoBehaviour {
 
             if (tile != null) {
 
-                if (!tile.didConsume && (tile.isPellet || tile.isSupperPellet)) {
-                    o.GetComponent<SpriteRenderer>().enabled = false;
-                    tile.didConsume = true;
-                    if (GameMenu.isOnePlayerGame)
+                bool didConsume = false;
+                if (GameBoard.isPlayerOneUp)
+                {
+                    if (!tile.didConsumePlayerOne && (tile.isPellet || tile.isSupperPellet))
                     {
+                        didConsume = true;
+                        tile.didConsumePlayerOne = true;
                         GameBoard.playerOneScore += 10;
-                        GameObject.Find("Game").transform.GetComponent<GameBoard>().playerOnePelletsConsumed++;
-                    }
-                    else
-                    {
-                        if (GameObject.Find("Game").GetComponent<GameBoard>().isPlayerOneUp)
-                        {
-                            GameBoard.playerOneScore += 10;
-                            GameObject.Find("Game").transform.GetComponent<GameBoard>().playerOnePelletsConsumed++;
-
-                        }
-                        else
-                        {
-                            GameBoard.playerTwoScore += 10;
-                            GameObject.Find("Game").transform.GetComponent<GameBoard>().playerTwoPelletsConsumed++;
-
-                        }
-
-                    }
-
-                    PlayChompSound();
-
-                    if (tile.isSupperPellet) { 
-                    GameObject[] ghosts = GameObject.FindGameObjectsWithTag("Ghost");
-
-                    foreach(GameObject go in ghosts)
-                    {
-                        go.GetComponent<Ghost>().StartFrightenedMode();
+                        GameMenu.playerOnePelletsConsumed++;
+                        
                     }
                 }
+                else
+                {
+                    if (!tile.didConsumePlayerTwo && (tile.isPellet || tile.isSupperPellet))
+                    {
+                        didConsume = true;
+                        tile.didConsumePlayerTwo = true;
+                        GameBoard.playerTwoScore += 10;
+                        GameMenu.playerTwoPelletsConsumed++;
+                    }
+                }
+                if (didConsume)
+                {
+                    o.GetComponent<SpriteRenderer>().enabled = false;
+                    PlayChompSound();
+                    if (tile.isSupperPellet)
+                    {
+                        GameObject[] ghosts = GameObject.FindGameObjectsWithTag("Ghost");
+                        foreach(GameObject go in ghosts)
+                        {
+                            go.GetComponent<Ghost>().StartFrightenedMode();
+                        }
+                    }
                 }
             }
         }

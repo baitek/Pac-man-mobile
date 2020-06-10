@@ -7,6 +7,12 @@ public class GameMenu : MonoBehaviour {
 
     public static bool isOnePlayerGame = true;
 
+    public static int livesPlayerOne;
+    public static int livesPlayerTwo;
+
+    public static int playerOnePelletsConsumed = 0;
+    public static int playerTwoPelletsConsumed = 0;
+
     public Text playerText1;
     public Text playerText2;
     public Text playerSelector;
@@ -34,6 +40,11 @@ public class GameMenu : MonoBehaviour {
         }
         else if (Input.GetKeyUp(KeyCode.Return))
         {
+            livesPlayerOne = 3;
+            livesPlayerTwo = 3;
+
+            if (isOnePlayerGame)
+                livesPlayerTwo = 0;
             SceneManager.LoadScene("Level1");
         }
 	}
