@@ -25,8 +25,6 @@ public class PacMan : MonoBehaviour {
 	private Vector2 direction = Vector2.zero;
     private Vector2 nextDirection;
 
-    private int pelletsConsumed = 0;
-
     private Node currentNode, moveToNode, previousNode, targetNode;
 
     private Node startingPosition;
@@ -259,21 +257,25 @@ public class PacMan : MonoBehaviour {
                     if (GameMenu.isOnePlayerGame)
                     {
                         GameObject.Find("Game").transform.GetComponent<GameBoard>().playerOneScore += 10;
-
+                        GameObject.Find("Game").transform.GetComponent<GameBoard>().playerOnePelletsConsumed++;
                     }
                     else
                     {
                         if (GameObject.Find("Game").GetComponent<GameBoard>().isPlayerOneUp)
                         {
                             GameObject.Find("Game").transform.GetComponent<GameBoard>().playerOneScore += 10;
+                            GameObject.Find("Game").transform.GetComponent<GameBoard>().playerOnePelletsConsumed++;
+
                         }
                         else
                         {
                             GameObject.Find("Game").transform.GetComponent<GameBoard>().playerTwoScore += 10;
+                            GameObject.Find("Game").transform.GetComponent<GameBoard>().playerTwoPelletsConsumed++;
+
                         }
-                    
+
                     }
-                    pelletsConsumed++;
+
                     PlayChompSound();
 
                     if (tile.isSupperPellet) { 
