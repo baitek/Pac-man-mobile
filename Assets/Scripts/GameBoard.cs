@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameBoard : MonoBehaviour {
 
@@ -272,20 +273,46 @@ public class GameBoard : MonoBehaviour {
 
     IEnumerator ProcessRestart(float delay)
     {
-        playerText.transform.GetComponent<Text>().enabled = true;
-        readyText.transform.GetComponent<Text>().enabled = true;
+        pacManLives -= 1;
 
-        GameObject pacMan = GameObject.Find("PacMan");
-        pacMan.transform.GetComponent<SpriteRenderer>().enabled = false;
+        if (pacManLives == 0)
+        {
+            playerText.transform.GetComponent<Text>().enabled = true;
 
-        transform.GetComponent<AudioSource>().Stop();
+            readyText.transform.GetComponent<Text>().text = "GAME OVER";
+            readyText.transform.GetComponent<Text>().color = Color.red;
 
-        yield return new WaitForSeconds(delay);
+            readyText.transform.GetComponent<Text>().enabled = true;
 
-        StartCoroutine(ProcessRestartShowObjects(1));
+            GameObject pacMan = GameObject.Find("PacMan");
+            pacMan.transform.GetComponent<SpriteRenderer>().enabled = false;
 
+            transform.GetComponent<AudioSource>().Stop();
+
+            StartCoroutine(ProcessGameOver(2));
+        }
+        else
+        {
+            playerText.transform.GetComponent<Text>().enabled = true;
+            readyText.transform.GetComponent<Text>().enabled = true;
+
+            GameObject pacMan = GameObject.Find("PacMan");
+            pacMan.transform.GetComponent<SpriteRenderer>().enabled = false;
+
+            transform.GetComponent<AudioSource>().Stop();
+
+            yield return new WaitForSeconds(delay);
+
+            StartCoroutine(ProcessRestartShowObjects(1));
+        }
     }
 
+    IEnumerator ProcessGameOver(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        SceneManager.LoadScene("GameMenu");
+    }
     IEnumerator ProcessRestartShowObjects(float delay)
     {
         playerText.transform.GetComponent<Text>().enabled = false;
@@ -310,7 +337,7 @@ public class GameBoard : MonoBehaviour {
     public void Restart()
     {
         readyText.transform.GetComponent<Text>().enabled = false;
-        pacManLives -= 1;
+
         GameObject pacMan = GameObject.Find("PacMan");
         pacMan.transform.GetComponent<PacMan>().Restart();
 
