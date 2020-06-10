@@ -256,20 +256,20 @@ public class PacMan : MonoBehaviour {
                     tile.didConsume = true;
                     if (GameMenu.isOnePlayerGame)
                     {
-                        GameObject.Find("Game").transform.GetComponent<GameBoard>().playerOneScore += 10;
+                        GameBoard.playerOneScore += 10;
                         GameObject.Find("Game").transform.GetComponent<GameBoard>().playerOnePelletsConsumed++;
                     }
                     else
                     {
                         if (GameObject.Find("Game").GetComponent<GameBoard>().isPlayerOneUp)
                         {
-                            GameObject.Find("Game").transform.GetComponent<GameBoard>().playerOneScore += 10;
+                            GameBoard.playerOneScore += 10;
                             GameObject.Find("Game").transform.GetComponent<GameBoard>().playerOnePelletsConsumed++;
 
                         }
                         else
                         {
-                            GameObject.Find("Game").transform.GetComponent<GameBoard>().playerTwoScore += 10;
+                            GameBoard.playerTwoScore += 10;
                             GameObject.Find("Game").transform.GetComponent<GameBoard>().playerTwoPelletsConsumed++;
 
                         }

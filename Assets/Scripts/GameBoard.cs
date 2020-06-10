@@ -12,23 +12,31 @@ public class GameBoard : MonoBehaviour {
     private bool didStartDeath = false;
     private bool didStartConsumed = false;
 
-    private int playerOneLevel =1;
-    private int playerTwoLevel = 1; 
+    private static int playerOneLevel = 1;
+    private static int playerTwoLevel = 1; 
+
     public int playerOnePelletsConsumed = 0;
     public int playerTwoPelletsConsumed = 0;
 
     public int totalPellets = 0;
     public int score = 0;
-    public int playerOneScore = 0;
-    public int playerTwoScore = 0;
+    public static int playerOneScore = 0;
+    public static int playerTwoScore = 0;
     public int pacManLives = 3;
 
     public bool isPlayerOneUp = true;
+    public bool shouldBlink = false;
+
+    public float blinkIntervalTime = 0.1f;
+    private float blinkIntervalTimer = 0;
 
     public AudioClip backgroundAudioNormal;
     public AudioClip backgroundAudioFrightened;
     public AudioClip backgroundAudioDeath;
     public AudioClip consumedGhostAudioClip;
+
+    public Sprite mazeBlue;
+    public Sprite mazeWhite;
 
     public Text playerText;
     public Text readyText;
@@ -76,6 +84,8 @@ public class GameBoard : MonoBehaviour {
         UpdateUI();
 
         CheckPelletsConsumed();
+
+        CheckShouldBlink();
     }
     void UpdateUI()
     {
@@ -162,7 +172,42 @@ public class GameBoard : MonoBehaviour {
 
         }
 
+        shouldBlink = true;
+
         yield return new WaitForSeconds(delay);
+
+        shouldBlink = false;
+        StartNextLevel();
+    }
+
+    private void StartNextLevel()
+    {
+        SceneManager.LoadScene("Level1");
+    }
+
+    private void CheckShouldBlink()
+    {
+        if (shouldBlink)
+        {
+            if (blinkIntervalTimer < blinkIntervalTime)
+            {
+                blinkIntervalTimer += Time.deltaTime;
+            }
+            else
+            {
+                blinkIntervalTimer = 0;
+
+                if (GameObject.Find("Maze").transform.GetComponent<SpriteRenderer>().sprite = mazeBlue)
+                {
+                    GameObject.Find("Maze").transform.GetComponent<SpriteRenderer>().sprite = mazeWhite;
+                }
+                else
+                {
+                    GameObject.Find("Maze").transform.GetComponent<SpriteRenderer>().sprite = mazeBlue;
+                }
+
+            }
+        }
     }
     public void StartGame()
     {

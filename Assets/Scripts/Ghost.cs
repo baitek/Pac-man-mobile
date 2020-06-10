@@ -234,17 +234,17 @@ public class Ghost : MonoBehaviour {
     {
         if (GameMenu.isOnePlayerGame)
         {
-            GameObject.Find("Game").GetComponent<GameBoard>().playerOneScore += 200;
+           GameBoard.playerOneScore += 200;
         }
         else
         {
             if (GameObject.Find("Game").GetComponent<GameBoard>().isPlayerOneUp)
             {
-                GameObject.Find("Game").GetComponent<GameBoard>().playerOneScore += 200;
+                GameBoard.playerOneScore += 200;
             }
             else
             {
-                GameObject.Find("Game").GetComponent<GameBoard>().playerTwoScore += 200;
+                GameBoard.playerTwoScore += 200;
 
             }
         }
