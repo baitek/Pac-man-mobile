@@ -229,7 +229,41 @@ public class GameBoard : MonoBehaviour {
 
     private void StartNextLevel()
     {
-        SceneManager.LoadScene("Level1");
+        StopAllCoroutines();
+
+        if (isPlayerOneUp)
+        {
+            ResetPelletsForPlayer(1);
+            GameMenu.playerOnePelletsConsumed = 0;
+        }
+        else
+        {
+            ResetPelletsForPlayer(2);
+            GameMenu.playerTwoPelletsConsumed = 0;
+        }
+
+        GameObject.Find("Maze").transform.GetComponent<SpriteRenderer>().sprite = mazeBlue;
+
+        didIncrementLevel = false;
+
+        StartCoroutine(ProcessStartNextLevel(1));
+    }
+
+    IEnumerator ProcessStartNextLevel(float delay)
+    {
+        playerText.transform.GetComponent<Text>().enabled = true;
+        readyText.transform.GetComponent<Text>().enabled = true;
+
+        if (isPlayerOneUp)
+            StartCoroutine(StartBlinking(playerOneUp));
+        else
+            StartCoroutine(StartBlinking(playerTwoUp));
+
+        RedrawBoard();
+
+        yield return new WaitForSeconds(delay);
+
+        StartCoroutine(ProcessRestartShowObjects(1));
     }
 
     private void CheckShouldBlink()
@@ -439,9 +473,13 @@ public class GameBoard : MonoBehaviour {
 
     IEnumerator ProcessRestart(float delay)
     {
-        pacManLives -= 1;
+        if (isPlayerOneUp)
+            GameMenu.livesPlayerOne -= 1;
+        else
+            GameMenu.livesPlayerTwo -= 1;
 
-        if (pacManLives == 0)
+
+        if (GameMenu.livesPlayerOne == 0 && GameMenu.livesPlayerTwo == 0)
         {
             playerText.transform.GetComponent<Text>().enabled = true;
 
@@ -456,6 +494,49 @@ public class GameBoard : MonoBehaviour {
             transform.GetComponent<AudioSource>().Stop();
 
             StartCoroutine(ProcessGameOver(2));
+        }else if (GameMenu.livesPlayerOne == 0 || GameMenu.livesPlayerTwo == 0)
+        {
+            if (GameMenu.livesPlayerOne == 0)
+            {
+                playerText.transform.GetComponent<Text>().text = "PLAYER 1";
+            }else if (GameMenu.livesPlayerTwo == 0)
+            {
+                playerText.transform.GetComponent<Text>().text = "PLAYER 2";
+            }
+            readyText.transform.GetComponent<Text>().text = "GAME OVER";
+            readyText.transform.GetComponent<Text>().color = Color.red;
+
+            readyText.transform.GetComponent<Text>().enabled = true;
+            playerText.transform.GetComponent<Text>().enabled = true;
+
+            GameObject pacMan = GameObject.Find("PacMan");
+            pacMan.transform.GetComponent<SpriteRenderer>().enabled = false;
+
+            transform.GetComponent<AudioSource>().Stop();
+
+            yield return new WaitForSeconds(delay);
+
+            if (!GameMenu.isOnePlayerGame)
+            {
+                isPlayerOneUp = !isPlayerOneUp;
+            }
+            if (isPlayerOneUp)            
+                StartCoroutine(StartBlinking(playerOneUp));
+            else
+                StartCoroutine(StartBlinking(playerTwoUp));
+
+            RedrawBoard();
+
+            if(isPlayerOneUp)
+                playerText.transform.GetComponent<Text>().text = "PLAYER 1";
+            else
+                playerText.transform.GetComponent<Text>().text = "PLAYER 2";
+            readyText.transform.GetComponent<Text>().text = "READY";
+            readyText.transform.GetComponent<Text>().color = new Color(240f / 255f, 207f / 255f, 101f / 255f);
+
+            yield return new WaitForSeconds(delay);
+
+            StartCoroutine(ProcessRestartShowObjects(2));
         }
         else
         {
@@ -467,6 +548,22 @@ public class GameBoard : MonoBehaviour {
 
             transform.GetComponent<AudioSource>().Stop();
 
+            if (!GameMenu.isOnePlayerGame)            
+                isPlayerOneUp = !isPlayerOneUp;
+                        
+            if (isPlayerOneUp)
+                StartCoroutine(StartBlinking(playerOneUp));
+            else
+                StartCoroutine(StartBlinking(playerTwoUp));
+            if (!GameMenu.isOnePlayerGame)
+            {
+                if (isPlayerOneUp)
+                    playerText.transform.GetComponent<Text>().text = "PLAYER 1";
+                else
+                    playerText.transform.GetComponent<Text>().text = "PLAYER 2";
+            }
+
+            RedrawBoard();
             yield return new WaitForSeconds(delay);
 
             StartCoroutine(ProcessRestartShowObjects(1));
@@ -479,6 +576,7 @@ public class GameBoard : MonoBehaviour {
 
         SceneManager.LoadScene("GameMenu");
     }
+
     IEnumerator ProcessRestartShowObjects(float delay)
     {
         playerText.transform.GetComponent<Text>().enabled = false;
@@ -487,6 +585,7 @@ public class GameBoard : MonoBehaviour {
         foreach (GameObject ghost in o)
         {
             ghost.transform.GetComponent<SpriteRenderer>().enabled = true;
+            ghost.transform.GetComponent<Animator>().enabled = true;
             ghost.transform.GetComponent<Ghost>().MoveToStartingPosition();
         }
         GameObject pacMan = GameObject.Find("PacMan");
@@ -502,6 +601,20 @@ public class GameBoard : MonoBehaviour {
     }
     public void Restart()
     {
+        int playerLevel = 0;
+        if (isPlayerOneUp)
+            playerLevel = playerOneLevel;
+        else
+            playerLevel = playerTwoLevel;
+
+        GameObject.Find("PacMan").GetComponent<PacMan>().SetDifficultyForLevel(playerLevel);
+
+        GameObject[] obj = GameObject.FindGameObjectsWithTag("Ghost");
+        foreach (GameObject ghost in obj)
+        {
+            ghost.transform.GetComponent<Ghost>().SetDifficultyForLevel(playerLevel);
+        }
+
         readyText.transform.GetComponent<Text>().enabled = false;
 
         GameObject pacMan = GameObject.Find("PacMan");
@@ -517,6 +630,58 @@ public class GameBoard : MonoBehaviour {
         transform.GetComponent<AudioSource>().Play();
 
         didStartDeath = false;
+    }
+
+    void ResetPelletsForPlayer(int playerNum)
+    {
+        Object[] objects = GameObject.FindObjectsOfType(typeof(GameObject));
+
+        foreach(GameObject o in objects)
+        {
+            if (o.GetComponent<Tile>() != null)
+            {
+                if (o.GetComponent<Tile>().isPellet || o.GetComponent<Tile>().isSupperPellet)
+                {
+                    if (playerNum == 1)
+                    {
+                        o.GetComponent<Tile>().didConsumePlayerOne = false;
+                    }
+                    else
+                    {
+                        o.GetComponent<Tile>().didConsumePlayerTwo = false;
+                    }
+                }
+            }
+        }
+    }
+
+    void RedrawBoard()
+    {
+        Object[] objects = GameObject.FindObjectsOfType(typeof(GameObject));
+
+        foreach (GameObject o in objects)
+        {
+            if (o.GetComponent<Tile>() != null)
+            {
+                if (o.GetComponent<Tile>().isPellet || o.GetComponent<Tile>().isSupperPellet)
+                {
+                    if (isPlayerOneUp)
+                    {
+                        if (o.GetComponent<Tile>().didConsumePlayerOne)                        
+                            o.GetComponent<SpriteRenderer>().enabled = false;                        
+                        else                        
+                            o.GetComponent<SpriteRenderer>().enabled = true;                        
+                    }
+                    else
+                    {
+                        if (o.GetComponent<Tile>().didConsumePlayerTwo)                        
+                            o.GetComponent<SpriteRenderer>().enabled = false;                        
+                        else                        
+                            o.GetComponent<SpriteRenderer>().enabled = true;                        
+                    }
+                }
+            }
+        }
     }
 }
 
