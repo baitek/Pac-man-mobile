@@ -20,6 +20,8 @@ public class GameBoard : MonoBehaviour {
     public static int playerOneScore = 0;
     public static int playerTwoScore = 0;
 
+    public static int ghostConsumedRunningScore;
+
     public static bool isPlayerOneUp = true;
     public bool shouldBlink = false;
 
@@ -333,7 +335,7 @@ public class GameBoard : MonoBehaviour {
             {
 
                 ghost.transform.GetComponent<Ghost>().canMove = false;
-            }
+            } 
             GameObject pacMan = GameObject.Find("PacMan");
             pacMan.transform.GetComponent<PacMan>().canMove = false;
             pacMan.transform.GetComponent<SpriteRenderer>().enabled = false;
@@ -344,6 +346,8 @@ public class GameBoard : MonoBehaviour {
 
             consumedGhostScoreText.GetComponent<RectTransform>().anchorMin = viewPortPoint;
             consumedGhostScoreText.GetComponent<RectTransform>().anchorMax = viewPortPoint;
+
+            consumedGhostScoreText.text = ghostConsumedRunningScore.ToString();
 
             consumedGhostScoreText.GetComponent<Text>().enabled = true;
             transform.GetComponent<AudioSource>().PlayOneShot(consumedGhostAudioClip);

@@ -290,7 +290,12 @@ public class PacMan : MonoBehaviour {
                     {
                         didConsume = true;
                         tile.didConsumePlayerOne = true;
-                        GameBoard.playerOneScore += 10;
+
+                        if (tile.isSupperPellet)                        
+                            GameBoard.playerOneScore += 50;
+                        else
+                            GameBoard.playerOneScore += 10;
+
                         GameMenu.playerOnePelletsConsumed++;
                         
                     }
@@ -301,7 +306,12 @@ public class PacMan : MonoBehaviour {
                     {
                         didConsume = true;
                         tile.didConsumePlayerTwo = true;
-                        GameBoard.playerTwoScore += 10;
+
+                        if (tile.isSupperPellet)
+                            GameBoard.playerTwoScore += 50;
+                        else
+                            GameBoard.playerTwoScore += 10;
+
                         GameMenu.playerTwoPelletsConsumed++;
                     }
                 }
