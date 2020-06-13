@@ -296,9 +296,10 @@ public class PacMan : MonoBehaviour {
                         else
                             GameBoard.playerOneScore += 10;
 
-                        GameMenu.playerOnePelletsConsumed++;
-                        
+                        GameMenu.playerOnePelletsConsumed++;                        
                     }
+                    if (tile.isBonusItem)
+                        ConsumedBonusItem(1, tile);
                 }
                 else
                 {
@@ -314,6 +315,8 @@ public class PacMan : MonoBehaviour {
 
                         GameMenu.playerTwoPelletsConsumed++;
                     }
+                    if (tile.isBonusItem)
+                        ConsumedBonusItem(1, tile);
                 }
                 if (didConsume)
                 {
@@ -331,6 +334,22 @@ public class PacMan : MonoBehaviour {
             }
         }
     }
+
+    void ConsumedBonusItem(int playerNum,Tile bonusItem)
+    {
+        if (playerNum == 1)
+        {
+            GameBoard.playerOneScore += bonusItem.pointValue;
+        }
+        else
+        {
+            GameBoard.playerTwoScore += bonusItem.pointValue;
+        }
+
+        GameObject.Find("Game").transform.GetComponent<GameBoard>().StartConsumedBonusItem(bonusItem.gameObject, bonusItem.pointValue);
+        Destroy(bonusItem.gameObject);
+    }
+
     Node CanMove(Vector2 d) {
         Node moveToNode = null;
         for(int i=0; i<currentNode.neighbors.Length; i++){
