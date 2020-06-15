@@ -347,7 +347,6 @@ public class PacMan : MonoBehaviour {
         }
 
         GameObject.Find("Game").transform.GetComponent<GameBoard>().StartConsumedBonusItem(bonusItem.gameObject, bonusItem.pointValue);
-        Destroy(bonusItem.gameObject);
     }
 
     Node CanMove(Vector2 d) {

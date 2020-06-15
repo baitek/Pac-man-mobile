@@ -520,6 +520,8 @@ public class GameBoard : MonoBehaviour {
 
         consumedGhostScoreText.GetComponent<Text>().enabled = true;
 
+        Destroy(bonusItem.gameObject);
+
         StartCoroutine(ProcessConsumedBonusItem(0.75f));
     }
 
