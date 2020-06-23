@@ -1,8 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PacMan : MonoBehaviour {
+
+    public Button left;
+    public Button right;
+    public Button up;
+    public Button down;
 
     public AudioClip chomp1;
     public AudioClip chomp2;
@@ -138,26 +144,47 @@ public class PacMan : MonoBehaviour {
     }
 	void CheckInput () {
 
-		if (Input.GetKeyDown (KeyCode.LeftArrow)) {
+        left.onClick.AddListener(TaskOnClickLeft);
+        right.onClick.AddListener(TaskOnClickRight);
+        up.onClick.AddListener(TaskOnClickUp);
+        down.onClick.AddListener(TaskOnClickDown);
+        /*	if (Input.GetKeyDown (KeyCode.LeftArrow)) {
 
-			ChangePosition(Vector2.left);
-          
+                ChangePosition(Vector2.left);
 
-		} else if (Input.GetKeyDown (KeyCode.RightArrow)) {
 
-			ChangePosition(Vector2.right);
+            } else if (Input.GetKeyDown (KeyCode.RightArrow)) {
 
-        }
-        else if (Input.GetKeyDown (KeyCode.UpArrow)) {
+                ChangePosition(Vector2.right);
 
-			ChangePosition(Vector2.up);
+            }
+            else if (Input.GetKeyDown (KeyCode.UpArrow)) {
 
-        }
-        else if (Input.GetKeyDown (KeyCode.DownArrow)) {
+                ChangePosition(Vector2.up);
 
-			ChangePosition(Vector2.down);
+            }
+            else if (Input.GetKeyDown (KeyCode.DownArrow)) {
 
-        }
+                ChangePosition(Vector2.down);
+
+            }*/
+    }
+    void TaskOnClickLeft()
+    {
+        ChangePosition(Vector2.left);
+    }
+    void TaskOnClickRight()
+    {
+        ChangePosition(Vector2.right);
+
+    }
+    void TaskOnClickUp()
+    {
+        ChangePosition(Vector2.up);
+    }
+    void TaskOnClickDown()
+    {
+        ChangePosition(Vector2.down);
     }
 
     void ChangePosition (Vector2 d)
