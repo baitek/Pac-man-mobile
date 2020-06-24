@@ -9,8 +9,7 @@ public class Tile : MonoBehaviour {
     public bool isPellet;
     public bool isSupperPellet;
 
-    public bool didConsumePlayerOne;
-    public bool didConsumePlayerTwo;
+    public bool didConsume;
 
     public bool isGhostHouseEntrance;
     public bool isGhostHouse;

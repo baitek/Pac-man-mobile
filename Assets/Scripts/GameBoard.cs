@@ -12,17 +12,13 @@ public class GameBoard : MonoBehaviour {
     private bool didStartDeath = false;
     private bool didStartConsumed = false;
 
-    public static int playerOneLevel = 1;
-    public static int playerTwoLevel = 1; 
+    public static int level = 1;
 
     public int totalPellets = 0;
-    public int score = 0;
-    public static int playerOneScore = 0;
-    public static int playerTwoScore = 0;
+    public static int score = 0;
 
     public static int ghostConsumedRunningScore;
 
-    public static bool isPlayerOneUp = true;
     public bool shouldBlink = false;
 
     public float blinkIntervalTime = 0.1f;
@@ -39,11 +35,8 @@ public class GameBoard : MonoBehaviour {
     public Text playerText;
     public Text readyText;
 
-    public Text highScoreText;
-    public Text playerOneUp;
-    public Text playerTwoUp;
-    public Text playerOneScoreText;
-    public Text playerTwoScoreText;
+    public Text highScoreText;  
+    public Text playerScoreText;
     public Image playerLives2;
     public Image playerLives3;
 
@@ -55,10 +48,9 @@ public class GameBoard : MonoBehaviour {
 
     private bool didIncrementLevel = false;
 
-    bool didSpawnBonusItem1_player1;
-    bool didSpawnBonusItem2_player1;
-    bool didSpawnBonusItem1_player2;
-    bool didSpawnBonusItem2_player2;
+    bool didSpawnBonusItem1;
+    bool didSpawnBonusItem2;
+
     void Start () {
 
         Object[] objects = GameObject.FindObjectsOfType (typeof(GameObject));
@@ -82,20 +74,11 @@ public class GameBoard : MonoBehaviour {
             }
         }
 
-        if (isPlayerOneUp)
-        {
-            if (playerOneLevel == 1)
+            if (level == 1)
             {
                 GetComponent<AudioSource>().Play();
             }
-        }
-        else
-        {
-            if (playerTwoLevel == 1)
-            {
-                GetComponent<AudioSource>().Play();
-            }
-        }
+      
         
         StartGame();
     }
@@ -113,62 +96,29 @@ public class GameBoard : MonoBehaviour {
 
     void BonusItems()
     {
-        if (GameMenu.isOnePlayerGame)
-        {
-            SpawnBonusItemForPlayer(1);
-        }
-        else
-        {
-            if (isPlayerOneUp)
-            {
-                SpawnBonusItemForPlayer(1);
-            }
-            else
-            {
-                SpawnBonusItemForPlayer(2);
-            }
-        }
+
+            SpawnBonusItemForPlayer();
     }
 
-    void SpawnBonusItemForPlayer(int playernum)
+    void SpawnBonusItemForPlayer()
     {
-        if(playernum == 1)
-        {
-            if(GameMenu.playerOnePelletsConsumed>=70 && GameMenu.playerOnePelletsConsumed < 170)
+
+            if(GameMenu.pelletsConsumed >= 70 && GameMenu.pelletsConsumed < 170)
             {
-                if (!didSpawnBonusItem1_player1)
+                if (!didSpawnBonusItem1)
                 {
-                    didSpawnBonusItem1_player1 = true;
-                    SpawnBonusItemForLevel(playerOneLevel);
+                    didSpawnBonusItem1 = true;
+                    SpawnBonusItemForLevel(level);
                 }
-            }else if (GameMenu.playerOnePelletsConsumed >= 170)
+            }else if (GameMenu.pelletsConsumed >= 170)
             {
-                if (!didSpawnBonusItem2_player1)
+                if (!didSpawnBonusItem2)
                 {
-                    didSpawnBonusItem2_player1 = true;
-                    SpawnBonusItemForLevel(playerOneLevel);
+                    didSpawnBonusItem2 = true;
+                    SpawnBonusItemForLevel(level);
                 }
-            }
-        }
-        else
-        {
-            if (GameMenu.playerTwoPelletsConsumed >= 70 && GameMenu.playerTwoPelletsConsumed < 170)
-            {
-                if (!didSpawnBonusItem1_player2)
-                {
-                    didSpawnBonusItem1_player2 = true;
-                    SpawnBonusItemForLevel(playerTwoLevel);
-                }
-            }
-            else if (GameMenu.playerTwoPelletsConsumed >= 170)
-            {
-                if (!didSpawnBonusItem2_player2)
-                {
-                    didSpawnBonusItem2_player2 = true;
-                    SpawnBonusItemForLevel(playerTwoLevel);
-                }
-            }
-        }
+            }       
+
     }
 
     void SpawnBonusItemForLevel(int level)
@@ -232,53 +182,26 @@ public class GameBoard : MonoBehaviour {
     }
     void UpdateUI()
     {
-        playerOneScoreText.text = playerOneScore.ToString();
-        playerTwoScoreText.text = playerTwoScore.ToString();
+        playerScoreText.text = score.ToString();
 
-        int currentLevel;
-
-        if (isPlayerOneUp)
-        {
-            currentLevel = playerOneLevel;
-
-            if (GameMenu.livesPlayerOne == 3)
+            if (GameMenu.pacManLives == 3)
             {
                 playerLives3.enabled = true;
                 playerLives2.enabled = true;
             }
-            else if (GameMenu.livesPlayerOne == 2)
+            else if (GameMenu.pacManLives == 2)
             {
                 playerLives3.enabled = false;
                 playerLives2.enabled = true;
             }
-            else if (GameMenu.livesPlayerOne == 1)
+            else if (GameMenu.pacManLives == 1)
             {
                 playerLives3.enabled = false;
                 playerLives2.enabled = false;
             }
-        }
-        else
-        {
-            currentLevel = playerTwoLevel;
-
-            if (GameMenu.livesPlayerTwo == 3)
-            {
-                playerLives3.enabled = true;
-                playerLives2.enabled = true;
-            }
-            else if (GameMenu.livesPlayerTwo == 2)
-            {
-                playerLives3.enabled = false;
-                playerLives2.enabled = true;
-            }
-            else if (GameMenu.livesPlayerTwo == 1)
-            {
-                playerLives3.enabled = false;
-                playerLives2.enabled = false;
-            }
-        }
+     
  
-        for(int i = 0; i < levelImages.Length; i++)
+     /*   for(int i = 0; i < levelImages.Length; i++)
         {
             Image li = levelImages[i];
             li.enabled = false;
@@ -289,50 +212,30 @@ public class GameBoard : MonoBehaviour {
             if (currentLevel >= i)
             {
                 Image li = levelImages[i - 1];
-                li.enabled = true;
+               // li.enabled = true;
             }
-        } 
+        } */
     }
 
     void CheckPelletsConsumed()
     {
-        if (isPlayerOneUp)
-        {
-            if (totalPellets == GameMenu.playerOnePelletsConsumed)
+            if (totalPellets == GameMenu.pelletsConsumed)
             {
-                PlayerWin(1);
+                PlayerWin();
             }
-        }
-        else
-        {
-            if (totalPellets == GameMenu.playerTwoPelletsConsumed)
-            {
-                PlayerWin(2);
-            }
-        }
+
     }
 
-    void PlayerWin(int playerNum)
+    void PlayerWin()
     {
-        if (playerNum == 1) 
-        {
+
             if (!didIncrementLevel)
             {
                 didIncrementLevel = true;
-                playerOneLevel++;
+                level++;
                 StartCoroutine(ProcessWin(2));
             }
 
-        }
-        else
-        {
-            if (!didIncrementLevel)
-            {
-                didIncrementLevel = true;
-                playerTwoLevel++;
-                StartCoroutine(ProcessWin(2));
-            }
-        }
     }
      
 
@@ -381,20 +284,12 @@ public class GameBoard : MonoBehaviour {
     {
         StopAllCoroutines();
 
-        if (isPlayerOneUp)
-        {
-            ResetPelletsForPlayer(1);
-            GameMenu.playerOnePelletsConsumed = 0;
-            didSpawnBonusItem1_player1 = false;
-            didSpawnBonusItem2_player1 = false;
-        }
-        else
-        {
-            ResetPelletsForPlayer(2);
-            GameMenu.playerTwoPelletsConsumed = 0;
-            didSpawnBonusItem1_player2 = false;
-            didSpawnBonusItem2_player2 = false;
-        }
+     
+            ResetPelletsForPlayer();
+            GameMenu.pelletsConsumed = 0;
+            didSpawnBonusItem1 = false;
+            didSpawnBonusItem2 = false;
+  
 
         GameObject.Find("Maze").transform.GetComponent<SpriteRenderer>().sprite = mazeBlue;
 
@@ -407,13 +302,6 @@ public class GameBoard : MonoBehaviour {
     {
         playerText.transform.GetComponent<Text>().enabled = true;
         readyText.transform.GetComponent<Text>().enabled = true;
-
-        if (isPlayerOneUp)
-            StartCoroutine(StartBlinking(playerOneUp));
-        else
-            StartCoroutine(StartBlinking(playerTwoUp));
-
-        RedrawBoard();
 
         yield return new WaitForSeconds(delay);
 
@@ -446,25 +334,7 @@ public class GameBoard : MonoBehaviour {
     }
     public void StartGame()
     {
-        if (GameMenu.isOnePlayerGame)
-        {
-            playerTwoUp.GetComponent<Text>().enabled = false;
-            playerTwoScoreText.GetComponent<Text>().enabled = false;
-        }
-        else
-        {
-            playerTwoUp.GetComponent<Text>().enabled = true;
-            playerTwoScoreText.GetComponent<Text>().enabled = true;
-        }
-        
-        if (isPlayerOneUp)
-        {
-            StartCoroutine(StartBlinking(playerOneUp));
-        }
-        else
-        {
-            StartCoroutine(StartBlinking(playerTwoUp));
-        }
+
         GameObject[] o = GameObject.FindGameObjectsWithTag("Ghost");
         foreach (GameObject ghost in o)
         {
@@ -531,14 +401,6 @@ public class GameBoard : MonoBehaviour {
         consumedGhostScoreText.GetComponent<Text>().enabled = false;
     }
 
-    IEnumerator StartBlinking(Text blinkText)
-    {
-        yield return new WaitForSeconds(0.25f);
-
-        blinkText.GetComponent<Text>().enabled = !blinkText.GetComponent<Text>().enabled;
-        StartCoroutine(StartBlinking(blinkText));
-    }
-
     IEnumerator ProcessConsumedAfter(float delay, Ghost consumedGhost)
     {
         yield return new WaitForSeconds(delay);
@@ -594,15 +456,6 @@ public class GameBoard : MonoBehaviour {
         if (!didStartDeath)
         {
             StopAllCoroutines();
-            if (GameMenu.isOnePlayerGame)
-            {
-                playerOneUp.GetComponent<Text>().enabled = true;
-            }
-            else
-            {
-                playerOneUp.GetComponent<Text>().enabled = true;
-                playerTwoUp.GetComponent<Text>().enabled = true;
-            }
 
             GameObject bonusItem = GameObject.Find("bonusItem");
             if (bonusItem)
@@ -657,13 +510,10 @@ public class GameBoard : MonoBehaviour {
 
     IEnumerator ProcessRestart(float delay)
     {
-        if (isPlayerOneUp)
-            GameMenu.livesPlayerOne -= 1;
-        else
-            GameMenu.livesPlayerTwo -= 1;
+            GameMenu.pacManLives -= 1;
 
-
-        if (GameMenu.livesPlayerOne == 0 && GameMenu.livesPlayerTwo == 0)
+           
+        if (GameMenu.pacManLives == 0 )
         {
             playerText.transform.GetComponent<Text>().enabled = true;
 
@@ -678,49 +528,7 @@ public class GameBoard : MonoBehaviour {
             transform.GetComponent<AudioSource>().Stop();
 
             StartCoroutine(ProcessGameOver(2));
-        }else if (GameMenu.livesPlayerOne == 0 || GameMenu.livesPlayerTwo == 0)
-        {
-            if (GameMenu.livesPlayerOne == 0)
-            {
-                playerText.transform.GetComponent<Text>().text = "PLAYER 1";
-            }else if (GameMenu.livesPlayerTwo == 0)
-            {
-                playerText.transform.GetComponent<Text>().text = "PLAYER 2";
-            }
-            readyText.transform.GetComponent<Text>().text = "GAME OVER";
-            readyText.transform.GetComponent<Text>().color = Color.red;
 
-            readyText.transform.GetComponent<Text>().enabled = true;
-            playerText.transform.GetComponent<Text>().enabled = true;
-
-            GameObject pacMan = GameObject.Find("PacMan");
-            pacMan.transform.GetComponent<SpriteRenderer>().enabled = false;
-
-            transform.GetComponent<AudioSource>().Stop();
-
-            yield return new WaitForSeconds(delay);
-
-            if (!GameMenu.isOnePlayerGame)
-            {
-                isPlayerOneUp = !isPlayerOneUp;
-            }
-            if (isPlayerOneUp)            
-                StartCoroutine(StartBlinking(playerOneUp));
-            else
-                StartCoroutine(StartBlinking(playerTwoUp));
-
-            RedrawBoard();
-
-            if(isPlayerOneUp)
-                playerText.transform.GetComponent<Text>().text = "PLAYER 1";
-            else
-                playerText.transform.GetComponent<Text>().text = "PLAYER 2";
-            readyText.transform.GetComponent<Text>().text = "READY";
-            readyText.transform.GetComponent<Text>().color = new Color(240f / 255f, 207f / 255f, 101f / 255f);
-
-            yield return new WaitForSeconds(delay);
-
-            StartCoroutine(ProcessRestartShowObjects(2));
         }
         else
         {
@@ -732,26 +540,12 @@ public class GameBoard : MonoBehaviour {
 
             transform.GetComponent<AudioSource>().Stop();
 
-            if (!GameMenu.isOnePlayerGame)            
-                isPlayerOneUp = !isPlayerOneUp;
-                        
-            if (isPlayerOneUp)
-                StartCoroutine(StartBlinking(playerOneUp));
-            else
-                StartCoroutine(StartBlinking(playerTwoUp));
-            if (!GameMenu.isOnePlayerGame)
-            {
-                if (isPlayerOneUp)
-                    playerText.transform.GetComponent<Text>().text = "PLAYER 1";
-                else
-                    playerText.transform.GetComponent<Text>().text = "PLAYER 2";
-            }
 
-            RedrawBoard();
             yield return new WaitForSeconds(delay);
 
             StartCoroutine(ProcessRestartShowObjects(1));
         }
+
     }
 
     IEnumerator ProcessGameOver(float delay)
@@ -786,10 +580,8 @@ public class GameBoard : MonoBehaviour {
     public void Restart()
     {
         int playerLevel = 0;
-        if (isPlayerOneUp)
-            playerLevel = playerOneLevel;
-        else
-            playerLevel = playerTwoLevel;
+
+            playerLevel = level;
 
         GameObject.Find("PacMan").GetComponent<PacMan>().SetDifficultyForLevel(playerLevel);
 
@@ -816,7 +608,7 @@ public class GameBoard : MonoBehaviour {
         didStartDeath = false;
     }
 
-    void ResetPelletsForPlayer(int playerNum)
+    void ResetPelletsForPlayer()
     {
         Object[] objects = GameObject.FindObjectsOfType(typeof(GameObject));
 
@@ -825,44 +617,9 @@ public class GameBoard : MonoBehaviour {
             if (o.GetComponent<Tile>() != null)
             {
                 if (o.GetComponent<Tile>().isPellet || o.GetComponent<Tile>().isSupperPellet)
-                {
-                    if (playerNum == 1)
-                    {
-                        o.GetComponent<Tile>().didConsumePlayerOne = false;
-                    }
-                    else
-                    {
-                        o.GetComponent<Tile>().didConsumePlayerTwo = false;
-                    }
-                }
-            }
-        }
-    }
-
-    void RedrawBoard()
-    {
-        Object[] objects = GameObject.FindObjectsOfType(typeof(GameObject));
-
-        foreach (GameObject o in objects)
-        {
-            if (o.GetComponent<Tile>() != null)
-            {
-                if (o.GetComponent<Tile>().isPellet || o.GetComponent<Tile>().isSupperPellet)
-                {
-                    if (isPlayerOneUp)
-                    {
-                        if (o.GetComponent<Tile>().didConsumePlayerOne)                        
-                            o.GetComponent<SpriteRenderer>().enabled = false;                        
-                        else                        
-                            o.GetComponent<SpriteRenderer>().enabled = true;                        
-                    }
-                    else
-                    {
-                        if (o.GetComponent<Tile>().didConsumePlayerTwo)                        
-                            o.GetComponent<SpriteRenderer>().enabled = false;                        
-                        else                        
-                            o.GetComponent<SpriteRenderer>().enabled = true;                        
-                    }
+                {                 
+                        o.GetComponent<Tile>().didConsume = false;
+             
                 }
             }
         }

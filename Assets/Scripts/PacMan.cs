@@ -50,15 +50,9 @@ public class PacMan : MonoBehaviour {
         direction = Vector2.left;
         orientation = Vector2.left;
 
-        ChangePosition(direction);
-        if (GameBoard.isPlayerOneUp)
-        {
-            SetDifficultyForLevel(GameBoard.playerOneLevel);
-        }
-        else
-        {
-            SetDifficultyForLevel(GameBoard.playerTwoLevel);
-        }
+        ChangePosition(direction);    
+            SetDifficultyForLevel(GameBoard.level);        
+     
 	}
 
     public void SetDifficultyForLevel(int level)
@@ -148,26 +142,6 @@ public class PacMan : MonoBehaviour {
         right.onClick.AddListener(TaskOnClickRight);
         up.onClick.AddListener(TaskOnClickUp);
         down.onClick.AddListener(TaskOnClickDown);
-        /*	if (Input.GetKeyDown (KeyCode.LeftArrow)) {
-
-                ChangePosition(Vector2.left);
-
-
-            } else if (Input.GetKeyDown (KeyCode.RightArrow)) {
-
-                ChangePosition(Vector2.right);
-
-            }
-            else if (Input.GetKeyDown (KeyCode.UpArrow)) {
-
-                ChangePosition(Vector2.up);
-
-            }
-            else if (Input.GetKeyDown (KeyCode.DownArrow)) {
-
-                ChangePosition(Vector2.down);
-
-            }*/
     }
     void TaskOnClickLeft()
     {
@@ -310,41 +284,23 @@ public class PacMan : MonoBehaviour {
 
             if (tile != null) {
 
-                bool didConsume = false;
-                if (GameBoard.isPlayerOneUp)
-                {
-                    if (!tile.didConsumePlayerOne && (tile.isPellet || tile.isSupperPellet))
+                bool didConsume = false;              
+                    if (!tile.didConsume && (tile.isPellet || tile.isSupperPellet))
                     {
                         didConsume = true;
-                        tile.didConsumePlayerOne = true;
+                        tile.didConsume = true;
 
                         if (tile.isSupperPellet)                        
-                            GameBoard.playerOneScore += 50;
+                            GameBoard.score += 50;
                         else
-                            GameBoard.playerOneScore += 10;
+                            GameBoard.score += 10;
 
-                        GameMenu.playerOnePelletsConsumed++;                        
+                        GameMenu.pelletsConsumed++;                        
                     }
                     if (tile.isBonusItem)
-                        ConsumedBonusItem(1, tile);
-                }
-                else
-                {
-                    if (!tile.didConsumePlayerTwo && (tile.isPellet || tile.isSupperPellet))
-                    {
-                        didConsume = true;
-                        tile.didConsumePlayerTwo = true;
-
-                        if (tile.isSupperPellet)
-                            GameBoard.playerTwoScore += 50;
-                        else
-                            GameBoard.playerTwoScore += 10;
-
-                        GameMenu.playerTwoPelletsConsumed++;
-                    }
-                    if (tile.isBonusItem)
-                        ConsumedBonusItem(1, tile);
-                }
+                        ConsumedBonusItem(tile);
+                
+            
                 if (didConsume)
                 {
                     o.GetComponent<SpriteRenderer>().enabled = false;
@@ -362,16 +318,11 @@ public class PacMan : MonoBehaviour {
         }
     }
 
-    void ConsumedBonusItem(int playerNum,Tile bonusItem)
+    void ConsumedBonusItem(Tile bonusItem)
     {
-        if (playerNum == 1)
-        {
-            GameBoard.playerOneScore += bonusItem.pointValue;
-        }
-        else
-        {
-            GameBoard.playerTwoScore += bonusItem.pointValue;
-        }
+
+            GameBoard.score += bonusItem.pointValue;
+
 
         GameObject.Find("Game").transform.GetComponent<GameBoard>().StartConsumedBonusItem(bonusItem.gameObject, bonusItem.pointValue);
     }

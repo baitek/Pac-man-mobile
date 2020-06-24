@@ -83,14 +83,9 @@ public class Ghost : MonoBehaviour {
         // Use this for initialization
     void Start () {
 
-        if (GameBoard.isPlayerOneUp)
-        {
-            SetDifficultyForLevel(GameBoard.playerOneLevel);
-        }
-        else
-        {
-            SetDifficultyForLevel(GameBoard.playerTwoLevel);
-        }
+
+        SetDifficultyForLevel(GameBoard.level);
+
         backgroundAudio = GameObject.Find("Game").transform.GetComponent<AudioSource>();
         pacMan = GameObject.FindGameObjectWithTag("PacMan");
 
@@ -360,22 +355,8 @@ public class Ghost : MonoBehaviour {
 
     void Consumed()
     {
-        if (GameMenu.isOnePlayerGame)
-        {
-           GameBoard.playerOneScore += GameBoard.ghostConsumedRunningScore;
-        }
-        else
-        {
-            if (GameBoard.isPlayerOneUp)
-            {
-                GameBoard.playerOneScore += GameBoard.ghostConsumedRunningScore;
-            }
-            else
-            {
-                GameBoard.playerTwoScore += GameBoard.ghostConsumedRunningScore;
+           GameBoard.score += GameBoard.ghostConsumedRunningScore;
 
-            }
-        }
         currentMode = Mode.Consumed;
         previousModeSpeed = moveSpeed;
         moveSpeed = consumedMoveSpeed;
