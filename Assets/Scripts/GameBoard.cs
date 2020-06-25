@@ -9,17 +9,17 @@ public class GameBoard : MonoBehaviour {
     private static int boardWidth = 28;
     private static int boardHeight = 36;
 
-    private bool didStartDeath = false;
-    private bool didStartConsumed = false;
+    private bool didStartDeath;
+    private bool didStartConsumed;
 
-    public static int level = 1;
+    public static int level;
 
-    public int totalPellets = 0;
-    public static int score = 0;
+    public int totalPellets;
+    public static int score;
 
     public static int ghostConsumedRunningScore;
 
-    public bool shouldBlink = false;
+    public bool shouldBlink;
 
     public float blinkIntervalTime = 0.1f;
     private float blinkIntervalTimer = 0;
@@ -46,14 +46,21 @@ public class GameBoard : MonoBehaviour {
 
     public Image[] levelImages;
 
-    private bool didIncrementLevel = false;
+    private bool didIncrementLevel;
 
     bool didSpawnBonusItem1;
     bool didSpawnBonusItem2;
 
     void Start () {
+    level = 1;
+    totalPellets = 0;
+    score = 0;
+    didStartDeath = false;
+    didStartConsumed = false;
+    shouldBlink = false;
+    didIncrementLevel = false;
 
-        Object[] objects = GameObject.FindObjectsOfType (typeof(GameObject));
+    Object[] objects = GameObject.FindObjectsOfType (typeof(GameObject));
 
         foreach (GameObject o in objects)
         {
@@ -199,22 +206,6 @@ public class GameBoard : MonoBehaviour {
                 playerLives3.enabled = false;
                 playerLives2.enabled = false;
             }
-     
- 
-     /*   for(int i = 0; i < levelImages.Length; i++)
-        {
-            Image li = levelImages[i];
-            li.enabled = false;
-        }
-         
-        for(int i = 1; i < levelImages.Length + 1; i++)
-        {
-            if (currentLevel >= i)
-            {
-                Image li = levelImages[i - 1];
-               // li.enabled = true;
-            }
-        } */
     }
 
     void CheckPelletsConsumed()
@@ -618,7 +609,8 @@ public class GameBoard : MonoBehaviour {
             {
                 if (o.GetComponent<Tile>().isPellet || o.GetComponent<Tile>().isSupperPellet)
                 {                 
-                        o.GetComponent<Tile>().didConsume = false;
+                    o.GetComponent<Tile>().didConsume = false;
+                    o.GetComponent<SpriteRenderer>().enabled = true;
              
                 }
             }

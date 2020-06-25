@@ -6,9 +6,9 @@ using UnityEngine.SceneManagement;
 public class GameMenu : MonoBehaviour {
     public Button start;
 
-    public static int pacManLives =3;
+    public static int pacManLives;
 
-    public static int pelletsConsumed = 0;
+    public static int pelletsConsumed;
 
     void Start()
     {
@@ -16,6 +16,8 @@ public class GameMenu : MonoBehaviour {
     }
     void TaskOnClickStart()
     {
+        pacManLives = 3;
+        pelletsConsumed = 0;
         SceneManager.LoadScene("Level1");
     }
 }
